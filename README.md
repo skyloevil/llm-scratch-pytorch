@@ -7,11 +7,13 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
 
 ## process
+### pytorch basis
 - [✅] grad
 - [✅] partial derivaties
 - [✅] compute graph
-- [❌] forward & backward
-- [❌] torch_variables_grad_inplace_operation
+- [✅] forward & backward
+- [✅] torch_variables_grad_inplace_operation
+- [❌] retain_graph
 
 ## Acknowledgments
 - [chunhuizhang](https://github.com/chunhuizhang)
