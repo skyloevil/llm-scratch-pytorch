@@ -3,7 +3,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 
 ## code
 - [grad dir](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)
-- [basic](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
+- [computation_graph](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
 - [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
 - [build-nanogpt](https://github.com/karpathy/build-nanogpt)
 
