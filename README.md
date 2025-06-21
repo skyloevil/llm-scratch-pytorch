@@ -5,10 +5,10 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [grad dir](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)
 - [basic](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
 - [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
-- [gpt2](https://github.com/karpathy/build-nanogpt)
+- [build-nanogpt](https://github.com/karpathy/build-nanogpt)
 
 ## process
-### pytorch basis
+### Pytorch basis
 - [✅] grad
 - [✅] partial derivaties
 - [✅] compute graph
@@ -19,7 +19,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 ### GPT2 scratch
 - [✅] exploring the GPT-2 (124M) OpenAI checkpoint
 - [✅] SECTION 1: implementing the GPT-2 nn.Module
-- [❌] loading the huggingface/GPT-2 parameters
+- [✅] loading the huggingface/GPT-2 parameters
 - [❌] implementing the forward pass to get logits
 - [❌] SECTION 1: implementing the GPT-2 nn.Module
 - [❌] loading the huggingface/GPT-2 parameters
