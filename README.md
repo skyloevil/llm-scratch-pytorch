@@ -22,7 +22,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [✅] loading the huggingface/GPT-2 parameters
 - [✅] implementing the forward pass to get logits
 - [✅] sampling init, prefix tokens, tokenization
-- [❌] sampling loop
+- [✅] sampling loop
 - [❌] sample, auto-detect the device
 - [❌] let’s train: data batches (B,T) → logits (B,T,C)
 - [❌] cross entropy loss
@@ -50,7 +50,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 
 ## tools
 - [tokenizer](https://tiktokenizer.vercel.app/)
-- [kvcache size calculator ](https://lmcache.ai/kv_cache_calculator.html)
+- [kvcache size calculator](https://lmcache.ai/kv_cache_calculator.html)
 
 ## Acknowledgments
 - [chunhuizhang](https://github.com/chunhuizhang)
