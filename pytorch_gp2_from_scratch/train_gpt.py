@@ -139,6 +139,7 @@ class GPT(nn.Module):
         # copy while ensuring all of the parameters are aligned and match in names and shapes
         sd_keys_hf = sd_hf.keys()
         #print("sd_keys_hf: ",sd_keys_hf)
+        #hf weights don't have .attn.masked_bias key.
         #sd_keys_hf = [k for k in sd_keys_hf if not k.endswith('.attn.masked_bias')] # ignore these, just a buffer
         sd_keys_hf = [k for k in sd_keys_hf if not k.endswith('.attn.bias')] # same, just the mask (buffer)
         transposed = ['attn.c_attn.weight', 'attn.c_proj.weight', 'mlp.c_fc.weight', 'mlp.c_proj.weight']
@@ -165,7 +166,7 @@ print("Are U OK?")
 model = GPT.from_pretrained('gpt2')   
 print("I'm very OK!")
 #--------------------------------------------------------------------------------------
-
+# device detection code:
 device = "cpu"
 if torch.cuda.is_available():
     device = "cuda"
@@ -174,3 +175,32 @@ elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
 print(f"using device: {device}")
 
 device_type = "cuda" if device.startswith("cuda") else "cpu"
+print(f"using device_type: {device}")
+#--------------------------------------------------------------------------------------
+'''
+PyTorch 内部自动处理：在 model.eval() 模式下，nn.Dropout 会自动关闭，
+但 PyTorch 的 nn.Dropout 在训练时已经进行了 1/(1-p) 的放大，
+因此在测试时无需额外缩放（因为训练时的期望已经和测试时对齐）。
+
+PyTorch handles this automatically: in model.eval() mode, nn.Dropout is automatically disabled.
+Moreover, nn.Dropout in PyTorch already applies a scaling factor of 1/(1-p) during training,
+so no additional scaling is needed during evaluation (because the expected value during training is already aligned with evaluation).
+'''
+num_return_sequences = 5
+max_length = 30
+
+model.eval()
+model.to(device)
+
+# https://tiktokenizer.vercel.app/
+import tiktoken
+enc = tiktoken.get_encoding('gpt2')
+tokens = enc.encode("Hello,I'm a language model,")
+tokens = torch.tensor(tokens,dtype=torch.long)
+print("tokens size: ",tokens.shape)
+tokens = tokens.unsqueeze(0).repeat(num_return_sequences,1)
+print("tokens unsqueeze size: ",tokens.shape)
+x = tokens.to(device)
+
+
+

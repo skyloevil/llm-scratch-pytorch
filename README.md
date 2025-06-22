@@ -21,7 +21,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [✅] SECTION 1: implementing the GPT-2 nn.Module
 - [✅] loading the huggingface/GPT-2 parameters
 - [✅] implementing the forward pass to get logits
-- [❌] sampling init, prefix tokens, tokenization
+- [✅] sampling init, prefix tokens, tokenization
 - [❌] sampling loop
 - [❌] sample, auto-detect the device
 - [❌] let’s train: data batches (B,T) → logits (B,T,C)
@@ -47,6 +47,10 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [❌] SECTION 4: results in the morning! GPT-2, GPT-3 repro
 - [❌] shoutout to llm.c, equivalent but faster code in raw C/CUDA
 - [❌] summary, phew, build-nanogpt github repo
+
+## tools
+- [tokenizer](https://tiktokenizer.vercel.app/)
+- [kvcache size calculator ](https://lmcache.ai/kv_cache_calculator.html)
 
 ## Acknowledgments
 - [chunhuizhang](https://github.com/chunhuizhang)
