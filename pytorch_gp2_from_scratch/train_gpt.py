@@ -211,13 +211,38 @@ if torch.cuda.is_available():
 
 while x.size(1) < max_length:
     with torch.no_grad():
-        logits = model(x)
-        logits = logits[:,-1,:]
-        probs = F.softmax(logits,dim=-1)
+        '''
+            model(x) shape:  torch.Size([5, 8, 50257])
+            logits[:,-1,:] shape:  torch.Size([5, 50257])
+            model(x) shape:  torch.Size([5, 9, 50257])
+            logits[:,-1,:] shape:  torch.Size([5, 50257])
+            ..........
+            model(x) shape:  torch.Size([5, 28, 50257])
+            logits[:,-1,:] shape:  torch.Size([5, 50257])
+            model(x) shape:  torch.Size([5, 29, 50257])
+            logits[:,-1,:] shape:  torch.Size([5, 50257])
+        '''
 
-        topk_probs,tok_indices = torch.topk(probs,50,dim=-1)
-        ix = torch.multinomial(topk_probs,1)
-        xcol = torch.gather(tok_indices,-1,ix)
-        x = torch.cat((x,xcol),dim=1)
+        #All the token logit streaming,from first to the current tail,and continous adding
+        logits = model(x) # (B, T) -> (B, T, vocab_size)
+        #print("model(x) shape: ",logits.shape)
+        #always GET the final one token logit
+        logits = logits[:,-1,:] # (B, vocab_size)
+        #print("logits[:,-1,:] shape: ",logits.shape)
+        probs = F.softmax(logits,dim=-1)    #(B, vocab_size)
+        topk_probs,tok_indices = torch.topk(probs,50,dim=-1)    #(B, 50),(B, 50)
+        ix = torch.multinomial(topk_probs,1)    #(B, 1)
+        '''
+            Example
+                If:
+                tok_indices is [[5, 12, 8], [20, 15, 30]] (shape 2×3)
+                ix is [[1], [0]] (shape 2×1)
+                Then torch.gather(tok_indices, -1, ix) would:
+                For first row: take index 1 → 12
+                For second row: take index 0 → 20
+                Result: [[12], [20]]
+        '''
+        xcol = torch.gather(tok_indices,-1,ix)  #(B, 1) get token id 
+        x = torch.cat((x,xcol),dim=1) #(B, T) -> (B, T+1)
 
 
