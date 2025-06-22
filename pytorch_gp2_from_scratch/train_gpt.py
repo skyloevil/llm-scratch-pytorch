@@ -1,3 +1,5 @@
+#ref code:https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py
+
 from dataclasses import dataclass
 import torch
 import torch.nn as nn
@@ -91,7 +93,22 @@ class GPT(nn.Module):
         ))
         self.lm_head = nn.Linear(config.n_embd,config.vocab_size,bias=False)
 
-        self.transformer.wte.weight = self.lm_head.weight
+    def forward(self,idx):
+        # idx is of shape (B,T)
+        B,T = idx.size()
+        assert T <= self.config.block_size, f"Cannot forward sequence of length {T}, block size is only {self.config.block_size}"
+        
+        pos = torch.arange(0,T,dtype=torch.long,device=idx.device)
+        pos_emb = self.transformer.wpe(pos)
+        tok_emb = self.transformer.wte(idx)
+        x = pos_emb+tok_emb
+
+        for block in self.transformer.h:
+            x = block(x)
+        x = self.transformer.ln_f(x)
+        logits = self.lm_head(x)
+        return logits
+
         
     @classmethod
     def from_pretrained(cls,model_type):
@@ -113,7 +130,7 @@ class GPT(nn.Module):
 
         sd = model.state_dict()
         sd_keys = sd.keys()
-        #ßßßßßßßßprint("sd_keys: ",sd_keys)
+        #print("sd_keys: ",sd_keys)
         sd_keys = [k for k in sd_keys if not k.endswith('.attn.bias')] # discard this mask / buffer, not a param
         # init a huggingface/transformers model
         model_hf = GPT2LMHeadModel.from_pretrained(model_type)
@@ -122,7 +139,7 @@ class GPT(nn.Module):
         # copy while ensuring all of the parameters are aligned and match in names and shapes
         sd_keys_hf = sd_hf.keys()
         #print("sd_keys_hf: ",sd_keys_hf)
-        sd_keys_hf = [k for k in sd_keys_hf if not k.endswith('.attn.masked_bias')] # ignore these, just a buffer
+        #sd_keys_hf = [k for k in sd_keys_hf if not k.endswith('.attn.masked_bias')] # ignore these, just a buffer
         sd_keys_hf = [k for k in sd_keys_hf if not k.endswith('.attn.bias')] # same, just the mask (buffer)
         transposed = ['attn.c_attn.weight', 'attn.c_proj.weight', 'mlp.c_fc.weight', 'mlp.c_proj.weight']
         # basically the openai checkpoints use a "Conv1D" module, but we only want to use a vanilla Linear
@@ -144,5 +161,16 @@ class GPT(nn.Module):
 
 #--------------------------------------------------------------------------------------
 # load pretrain test code:
-model = GPT.from_pretrained('gpt2')   
 print("Are U OK?")
+model = GPT.from_pretrained('gpt2')   
+print("I'm very OK!")
+#--------------------------------------------------------------------------------------
+
+device = "cpu"
+if torch.cuda.is_available():
+    device = "cuda"
+elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+    device = "mps"
+print(f"using device: {device}")
+
+device_type = "cuda" if device.startswith("cuda") else "cpu"

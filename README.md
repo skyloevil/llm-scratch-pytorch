@@ -20,10 +20,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [✅] exploring the GPT-2 (124M) OpenAI checkpoint
 - [✅] SECTION 1: implementing the GPT-2 nn.Module
 - [✅] loading the huggingface/GPT-2 parameters
-- [❌] implementing the forward pass to get logits
-- [❌] SECTION 1: implementing the GPT-2 nn.Module
-- [❌] loading the huggingface/GPT-2 parameters
-- [❌] implementing the forward pass to get logits
+- [✅] implementing the forward pass to get logits
 - [❌] sampling init, prefix tokens, tokenization
 - [❌] sampling loop
 - [❌] sample, auto-detect the device
