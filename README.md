@@ -14,7 +14,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [✅] compute graph
 - [✅] forward & backward
 - [✅] torch_variables_grad_inplace_operation
-- [❌] retain_graph
+- [✅] retain_graph
 
 ### GPT2 scratch
 - [✅] exploring the GPT-2 (124M) OpenAI checkpoint
