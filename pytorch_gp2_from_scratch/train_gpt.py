@@ -30,8 +30,8 @@ class CausalSelfAttention(nn.Module):
         qkv = self.c_attn(x)
         q,k,v = qkv.split(self.n_embd,dim=2)
         k = k.view(B,T,self.n_head,C//self.n_head).transpose(1,2)
-        q = k.view(B,T,self.n_head,C//self.n_head).transpose(1,2)
-        v = k.view(B,T,self.n_head,C//self.n_head).transpose(1,2)
+        q = q.view(B,T,self.n_head,C//self.n_head).transpose(1,2)
+        v = v.view(B,T,self.n_head,C//self.n_head).transpose(1,2)
 
         att = (q@k.transpose(-2,-1)) * (1.0/math.sqrt(k.size(-1)))
         att = att.masked_fill(self.bias[:,:,:T,:T] == 0,float('-inf'))
@@ -201,6 +201,23 @@ print("tokens size: ",tokens.shape)
 tokens = tokens.unsqueeze(0).repeat(num_return_sequences,1)
 print("tokens unsqueeze size: ",tokens.shape)
 x = tokens.to(device)
+print("x:",x," x.shape:",x.shape)
+#--------------------------------------------------------------------------------------
+#37:08
+#generate! right now x is (B,T) where B=5,T=8 (Hello,I'm a language model,)
+torch.manual_seed(42)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(42)
 
+while x.size(1) < max_length:
+    with torch.no_grad():
+        logits = model(x)
+        logits = logits[:,-1,:]
+        probs = F.softmax(logits,dim=-1)
+
+        topk_probs,tok_indices = torch.topk(probs,50,dim=-1)
+        ix = torch.multinomial(topk_probs,1)
+        xcol = torch.gather(tok_indices,-1,ix)
+        x = torch.cat((x,xcol),dim=1)
 
 
