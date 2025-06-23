@@ -162,9 +162,9 @@ class GPT(nn.Module):
 
 #--------------------------------------------------------------------------------------
 # load pretrain test code:
-#print("Are U OK?")
-#model = GPT.from_pretrained('gpt2')   
-#print("I'm very OK!")
+print("Are U OK?")
+model = GPT.from_pretrained('gpt2')   
+print("I'm very OK!")
 #--------------------------------------------------------------------------------------
 # device detection code:
 device = "cpu"
