@@ -23,7 +23,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [✅] implementing the forward pass to get logits
 - [✅] sampling init, prefix tokens, tokenization
 - [✅] sampling loop
-- [❌] sample, auto-detect the device
+- [✅] sample, auto-detect the device
 - [❌] let’s train: data batches (B,T) → logits (B,T,C)
 - [❌] cross entropy loss
 - [❌] optimization loop: overfit a single batch

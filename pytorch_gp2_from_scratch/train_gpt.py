@@ -162,9 +162,9 @@ class GPT(nn.Module):
 
 #--------------------------------------------------------------------------------------
 # load pretrain test code:
-print("Are U OK?")
-model = GPT.from_pretrained('gpt2')   
-print("I'm very OK!")
+#print("Are U OK?")
+#model = GPT.from_pretrained('gpt2')   
+#print("I'm very OK!")
 #--------------------------------------------------------------------------------------
 # device detection code:
 device = "cpu"
@@ -189,6 +189,7 @@ so no additional scaling is needed during evaluation (because the expected value
 num_return_sequences = 5
 max_length = 30
 
+model = GPT(GPTConfig())
 model.eval()
 model.to(device)
 
@@ -197,11 +198,11 @@ import tiktoken
 enc = tiktoken.get_encoding('gpt2')
 tokens = enc.encode("Hello,I'm a language model,")
 tokens = torch.tensor(tokens,dtype=torch.long)
-print("tokens size: ",tokens.shape)
+#print("tokens size: ",tokens.shape)
 tokens = tokens.unsqueeze(0).repeat(num_return_sequences,1)
-print("tokens unsqueeze size: ",tokens.shape)
+#print("tokens unsqueeze size: ",tokens.shape)
 x = tokens.to(device)
-print("x:",x," x.shape:",x.shape)
+#print("x:",x," x.shape:",x.shape)
 #--------------------------------------------------------------------------------------
 #37:08
 #generate! right now x is (B,T) where B=5,T=8 (Hello,I'm a language model,)
@@ -245,4 +246,8 @@ while x.size(1) < max_length:
         xcol = torch.gather(tok_indices,-1,ix)  #(B, 1) get token id 
         x = torch.cat((x,xcol),dim=1) #(B, T) -> (B, T+1)
 
-
+for i in range(num_return_sequences):
+    tokens = x[i,:max_length].tolist()
+    #print("x type,tokens type: ",type(x),type(tokens))
+    decoded = enc.decode(tokens)
+    print(">",decoded)
