@@ -30,8 +30,8 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
 - [✅] implementing the forward pass to get logits
 - [✅] sampling init, prefix tokens, tokenization
 - [✅] sampling loop
-- [❌] sample, auto-detect the device
-- [❌] let’s train: data batches (B,T) → logits (B,T,C)
+- [✅] sample, auto-detect the device
+- [✅] let’s train: data batches (B,T) → logits (B,T,C)
 - [❌] cross entropy loss
 - [❌] optimization loop: overfit a single batch
 - [❌] data loader lite
