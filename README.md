@@ -1,13 +1,20 @@
-# pytorch_practice_code
-PyTorch Practice Code - A collection of PyTorch fundamentals including basic syntax, computation graphs, loss calculations, and model implementations. Ideal for beginners learning deep learning with PyTorch.
+# llm-scratch-pytorch
+llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus on understanding the fundamentals of PyTorch and implementing LLMs from scratch,step by step.
 
-## code
+## Table of Contents
+1. [Introduction](#introduction)
+2. [Code](#code)
+3. [Process](#process)
+4. [Tools](#tools)
+5. [Acknowledgments](#acknowledgments)
+   
+## Code
 - [grad dir](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)
 - [computation_graph](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
 - [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
 - [build-nanogpt](https://github.com/karpathy/build-nanogpt)
 
-## process
+## Process
 ### Pytorch basis
 - [✅] grad
 - [✅] partial derivaties
@@ -23,7 +30,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [✅] implementing the forward pass to get logits
 - [✅] sampling init, prefix tokens, tokenization
 - [✅] sampling loop
-- [✅] sample, auto-detect the device
+- [❌] sample, auto-detect the device
 - [❌] let’s train: data batches (B,T) → logits (B,T,C)
 - [❌] cross entropy loss
 - [❌] optimization loop: overfit a single batch
@@ -48,7 +55,7 @@ PyTorch Practice Code - A collection of PyTorch fundamentals including basic syn
 - [❌] shoutout to llm.c, equivalent but faster code in raw C/CUDA
 - [❌] summary, phew, build-nanogpt github repo
 
-## tools
+## Tools
 - [tokenizer](https://tiktokenizer.vercel.app/)
 - [kvcache size calculator](https://lmcache.ai/kv_cache_calculator.html)
 
