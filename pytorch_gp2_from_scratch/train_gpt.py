@@ -73,11 +73,11 @@ class Block(nn.Module):
 
 @dataclass
 class GPTConfig:
-    block_size: int = 256
-    vocab_size: int = 65
-    n_layer: int = 6
-    n_head: int = 8
-    n_embd: int = 384
+    block_size: int = 1024
+    vocab_size: int = 50257
+    n_layer: int = 12
+    n_head: int = 12
+    n_embd: int = 768
 
 
 class GPT(nn.Module):
@@ -93,7 +93,7 @@ class GPT(nn.Module):
         ))
         self.lm_head = nn.Linear(config.n_embd,config.vocab_size,bias=False)
 
-    def forward(self,idx):
+    def forward(self,idx,targets=None):
         # idx is of shape (B,T)
         B,T = idx.size()
         assert T <= self.config.block_size, f"Cannot forward sequence of length {T}, block size is only {self.config.block_size}"
@@ -107,7 +107,10 @@ class GPT(nn.Module):
             x = block(x)
         x = self.transformer.ln_f(x)
         logits = self.lm_head(x)
-        return logits
+        loss = None
+        if targets is not None:
+            loss = F.cross_entropy(logits.view(-1,logits.size(-1)),targets.view(-1)) #(B*T,vocab_size),(B*T)
+        return logits,loss
 
         
     @classmethod
@@ -162,9 +165,9 @@ class GPT(nn.Module):
 
 #--------------------------------------------------------------------------------------
 # load pretrain test code:
-print("Are U OK?")
-model = GPT.from_pretrained('gpt2')   
-print("I'm very OK!")
+#print("Are U OK?")
+#model = GPT.from_pretrained('gpt2')   
+#print("I'm very OK!")
 #--------------------------------------------------------------------------------------
 # device detection code:
 device = "cpu"
@@ -177,6 +180,24 @@ print(f"using device: {device}")
 device_type = "cuda" if device.startswith("cuda") else "cpu"
 print(f"using device_type: {device}")
 #--------------------------------------------------------------------------------------
+import tiktoken
+enc = tiktoken.get_encoding('gpt2')
+with open('input.txt','r') as f:
+    text = f.read()
+tokens = enc.encode(text)
+B,T = 4,32
+buf = torch.tensor(tokens[:B*T+1])
+x = buf[:-1].view(B,T).to(device)
+y = buf[1:].view(B,T).to(device)
+
+model = GPT(GPTConfig())
+model.to(device)
+logits,loss = model(x,y)
+print(loss)
+#tensor(11.0549, device='mps:0', grad_fn=<NllLossBackward0>) = -ln(1/50257)
+import sys; sys.exit(0)
+#https://www.youtube.com/watch?v=l8pRSuU81PU&t=3194s
+#--------------------------------------------------------------------------------------
 '''
 PyTorch 内部自动处理：在 model.eval() 模式下，nn.Dropout 会自动关闭，
 但 PyTorch 的 nn.Dropout 在训练时已经进行了 1/(1-p) 的放大，
@@ -186,6 +207,7 @@ PyTorch handles this automatically: in model.eval() mode, nn.Dropout is automati
 Moreover, nn.Dropout in PyTorch already applies a scaling factor of 1/(1-p) during training,
 so no additional scaling is needed during evaluation (because the expected value during training is already aligned with evaluation).
 '''
+
 num_return_sequences = 5
 max_length = 30
 
