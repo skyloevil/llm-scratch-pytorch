@@ -164,6 +164,36 @@ class GPT(nn.Module):
         return model
 
 #--------------------------------------------------------------------------------------
+#data loader file 
+#https://youtu.be/l8pRSuU81PU?si=HxnEZ2Qsj78jzP0p
+import tiktoken
+class DataLoaderLite:
+    def __init__(self,B,T):
+        self.B = B
+        self.T = T
+    
+        with open('input.txt','r') as f:
+            text = f.read()
+        enc = tiktoken.get_encoding('gpt2')
+        tokens = enc.encode(text)
+        self.tokens = torch.tensor(tokens)
+        print(f"loaded {len(self.tokens)} tokens")
+        print(f"1 epoch = {len(self.tokens) // (B*T)} batches")
+        self.current_position = 0
+    
+    def next_batch(self):
+        B,T = self.B,self.T
+        buf = self.tokens[self.current_position : self.current_position+B*T+1]
+        x = (buf[:-1]).view(B,T)
+        y = (buf[1:]).view(B,T)
+
+        self.current_position += B * T
+
+        if self.current_position + (B*T+1) > len(self.tokens):
+            self.current_position = 0
+        return x,y
+
+#--------------------------------------------------------------------------------------
 # load pretrain test code:
 #print("Are U OK?")
 #model = GPT.from_pretrained('gpt2')   
@@ -180,6 +210,7 @@ print(f"using device: {device}")
 device_type = "cuda" if device.startswith("cuda") else "cpu"
 print(f"using device_type: {device}")
 #--------------------------------------------------------------------------------------
+'''
 import tiktoken
 enc = tiktoken.get_encoding('gpt2')
 with open('input.txt','r') as f:
@@ -189,14 +220,28 @@ B,T = 4,32
 buf = torch.tensor(tokens[:B*T+1])
 x = buf[:-1].view(B,T).to(device)
 y = buf[1:].view(B,T).to(device)
-
+'''
+train_loader = DataLoaderLite(B=4,T=32)
+#get logits
 model = GPT(GPTConfig())
 model.to(device)
-logits,loss = model(x,y)
-print(loss)
+#logits,loss = model(x,y)
+#print(loss)
 #tensor(11.0549, device='mps:0', grad_fn=<NllLossBackward0>) = -ln(1/50257)
-import sys; sys.exit(0)
 #https://www.youtube.com/watch?v=l8pRSuU81PU&t=3194s
+
+#optimize!
+optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4)
+for i in range(200):
+    x,y = train_loader.next_batch()
+    x,y = x.to(device),y.to(device)
+    optimizer.zero_grad()
+    logits,loss = model(x,y)
+    loss.backward()
+    optimizer.step()
+    print(f"step {i},loss: {loss.item()}")
+import sys; sys.exit(0)
+
 #--------------------------------------------------------------------------------------
 '''
 PyTorch 内部自动处理：在 model.eval() 模式下，nn.Dropout 会自动关闭，
