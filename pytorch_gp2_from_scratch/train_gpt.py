@@ -1,4 +1,5 @@
-#ref code:https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py
+#Ref code from build-nanogpt:   https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py
+#Ref code from openai/gpt-2:    https://github.com/openai/gpt-2/blob/master/src/model.py
 
 from dataclasses import dataclass
 import torch
@@ -232,7 +233,7 @@ model.to(device)
 
 #optimize!
 optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4)
-for i in range(200):
+for i in range(50):
     x,y = train_loader.next_batch()
     x,y = x.to(device),y.to(device)
     optimizer.zero_grad()

@@ -63,3 +63,4 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
 - [chunhuizhang](https://github.com/chunhuizhang)
 - [Andrej Karpathy](https://github.com/karpathy)
 - [yihong0618](https://github.com/yihong0618)
+- [openai](https://github.com/openai)
