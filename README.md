@@ -60,7 +60,9 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
 - [kvcache size calculator](https://lmcache.ai/kv_cache_calculator.html)
 
 ## Acknowledgments
+- [pytorch](https://github.com/pytorch)
 - [chunhuizhang](https://github.com/chunhuizhang)
 - [Andrej Karpathy](https://github.com/karpathy)
 - [yihong0618](https://github.com/yihong0618)
 - [openai](https://github.com/openai)
+- [Hugging Face](https://github.com/huggingface)

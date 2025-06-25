@@ -93,6 +93,8 @@ class GPT(nn.Module):
             ln_f = nn.LayerNorm(config.n_embd), 
         ))
         self.lm_head = nn.Linear(config.n_embd,config.vocab_size,bias=False)
+        # weight sharing scheme 768*50257 / 124M = 0.3112691613 = 31.13%
+        self.transformer.wte.weight = self.lm_head.weight
 
     def forward(self,idx,targets=None):
         # idx is of shape (B,T)
