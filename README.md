@@ -35,7 +35,7 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
 - [✅] cross entropy loss
 - [✅] optimization loop: overfit a single batch
 - [✅] data loader lite
-- [❌] parameter sharing wte and lm_head
+- [✅] parameter sharing wte and lm_head
 - [❌] model initialization: std 0.02, residual init
 - [❌] SECTION 2: Let’s make it fast. GPUs, mixed precision, 1000ms
 - [❌] Tensor Cores, timing the code, TF32 precision, 333ms
