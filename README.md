@@ -3,27 +3,22 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
 
 ## Table of Contents
 1. [Introduction](#introduction)
-2. [Code](#code)
-3. [Process](#process)
+2. [Process](#process)
+3. [Reference](#reference)
 4. [Tools](#tools)
 5. [Acknowledgments](#acknowledgments)
-   
-## Code
-- [grad dir](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)
-- [computation_graph](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
-- [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
-- [build-nanogpt](https://github.com/karpathy/build-nanogpt)
 
 ## Process
-### Pytorch basis
-- [✅] grad
+### [Pytorch basis](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/pytorch_basis)
+#### [Grad](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/pytorch_basis/computation_gragh)
+- [✅] grad basis
 - [✅] partial derivaties
 - [✅] compute graph
 - [✅] forward & backward
 - [✅] torch_variables_grad_inplace_operation
 - [✅] retain_graph
 
-### GPT2 scratch
+### [GPT2 scratch](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/pytorch_gp2_from_scratch)
 - [✅] exploring the GPT-2 (124M) OpenAI checkpoint
 - [✅] SECTION 1: implementing the GPT-2 nn.Module
 - [✅] loading the huggingface/GPT-2 parameters
@@ -54,6 +49,12 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
 - [❌] SECTION 4: results in the morning! GPT-2, GPT-3 repro
 - [❌] shoutout to llm.c, equivalent but faster code in raw C/CUDA
 - [❌] summary, phew, build-nanogpt github repo
+
+## Reference
+- [pytorch_grad](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)
+- [computation_graph](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
+- [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
+- [build-nanogpt](https://github.com/karpathy/build-nanogpt)
 
 ## Tools
 - [tokenizer](https://tiktokenizer.vercel.app/)
