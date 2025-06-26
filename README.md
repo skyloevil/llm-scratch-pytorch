@@ -67,11 +67,34 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [❌] shoutout to llm.c, equivalent but faster code in raw C/CUDA
 - [❌] summary, phew, build-nanogpt github repo
 
+### [LLaMA2 scratch](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/pytorch_llama2_from_scratch)
+- [❌] Introduction
+- [❌] LLaMA Architecture
+- [❌] Embeddings
+- [❌] Coding the Transformer
+- [❌] Rotary Positional Embedding
+- [❌] RMS Normalization
+- [❌] Encoder Layer
+- [❌] Self Attention with KV Cache
+- [❌] Grouped Query Attention
+- [❌] Coding the Self Attention
+- [❌] Feed Forward Layer with SwiGLU
+- [❌] Model weights loading
+- [❌] Inference strategies
+- [❌] Greedy Strategy
+- [❌] Beam Search
+- [❌] Temperature
+- [❌] Random Sampling
+- [❌] Top K
+- [❌] Top P
+- [❌] Coding the Inference
+
 ## Reference
 - [pytorch_grad](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)
 - [computation_graph](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
 - [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
 - [build-nanogpt](https://github.com/karpathy/build-nanogpt)
+- [pytorch-llama](https://github.com/hkproj/pytorch-llama)
 
 ## Tools
 - [tokenizer](https://tiktokenizer.vercel.app/)
@@ -84,3 +107,4 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [yihong0618](https://github.com/yihong0618)
 - [openai](https://github.com/openai)
 - [Hugging Face](https://github.com/huggingface)
+- [Umar Jamil](https://github.com/hkproj)
