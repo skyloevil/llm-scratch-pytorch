@@ -17,6 +17,7 @@ class CausalSelfAttention(nn.Module):
 
         self.c_attn = nn.Linear(config.n_embd,3 * config.n_embd)
         self.c_proj = nn.Linear(config.n_embd,config.n_embd)
+        self.c_proj.NANOGPT_SCALE_INIT = 1  
 
         self.n_head = config.n_head
         self.n_embd = config.n_embd
@@ -49,6 +50,7 @@ class MLP(nn.Module):
         self.c_fc = nn.Linear(config.n_embd,4*config.n_embd)
         self.gelu = nn.GELU(approximate='tanh')
         self.c_proj = nn.Linear(4*config.n_embd,config.n_embd)
+        self.c_proj.NANOGPT_SCALE_INIT = 1
 
     def forward(self,x):
         x = self.c_fc(x)
@@ -95,6 +97,23 @@ class GPT(nn.Module):
         self.lm_head = nn.Linear(config.n_embd,config.vocab_size,bias=False)
         # weight sharing scheme 768*50257 / 124M = 0.3112691613 = 31.13%
         self.transformer.wte.weight = self.lm_head.weight
+
+        #initialize weights
+        self.apply(self._init_weights)
+
+    def _init_weights(self,module):
+        if isinstance(module, nn.Linear):
+            # initialize linear layers with a normal distribution
+            std = 0.02
+            if hasattr(module, 'NANOGPT_SCALE_INIT'):
+                #every block has 2 residual connections, so we scale the std by 1/sqrt(2*n_layer)
+                std *= (2 * self.config.n_layer)**-0.5
+            torch.nn.init.normal_(module.weight,mean=0.0,std=std)
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            # initialize embedding layers with a normal distribution
+            torch.nn.init.normal_(module.weight,mean=0.0,std=0.02)
 
     def forward(self,idx,targets=None):
         # idx is of shape (B,T)
