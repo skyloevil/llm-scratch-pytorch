@@ -7,6 +7,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 import math
 from transformers import GPT2LMHeadModel
+import time
 
 #--------------------------------------------------------------------------------------
 
@@ -243,7 +244,7 @@ buf = torch.tensor(tokens[:B*T+1])
 x = buf[:-1].view(B,T).to(device)
 y = buf[1:].view(B,T).to(device)
 '''
-train_loader = DataLoaderLite(B=4,T=32)
+train_loader = DataLoaderLite(B=4,T=1024)
 #get logits
 model = GPT(GPTConfig())
 model.to(device)
@@ -252,16 +253,44 @@ model.to(device)
 #tensor(11.0549, device='mps:0', grad_fn=<NllLossBackward0>) = -ln(1/50257)
 #https://www.youtube.com/watch?v=l8pRSuU81PU&t=3194s
 
+'''
+RTX 4000 Ada
+before torch.set_float32_matmul_precision("high"):
+using device: cuda
+using device_type: cuda
+loaded 338025 tokens
+1 epoch = 41 batches
+step 0,loss: 10.90705680847168,dt:1243.05ms, tokens/sec: 6590.27
+step 1,loss: 9.505132675170898,dt:963.93ms, tokens/sec: 8498.56
+step 2,loss: 8.920276641845703,dt:961.54ms, tokens/sec: 8519.63
+'''
+torch.set_float32_matmul_precision("high")
+'''
+after torch.set_float32_matmul_precision("high"):
+using device: cuda
+using device_type: cuda
+loaded 338025 tokens
+1 epoch = 41 batches
+step 0,loss: 11.002205848693848,dt:971.97ms, tokens/sec: 8428.24
+step 1,loss: 9.620403289794922,dt:708.99ms, tokens/sec: 11554.42
+step 2,loss: 8.985677719116211,dt:709.15ms, tokens/sec: 11551.93
+'''
+
 #optimize!
 optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4)
 for i in range(50):
+    t0 = time.time()
     x,y = train_loader.next_batch()
     x,y = x.to(device),y.to(device)
     optimizer.zero_grad()
     logits,loss = model(x,y)
     loss.backward()
     optimizer.step()
-    print(f"step {i},loss: {loss.item()}")
+    torch.cuda.synchronize()  # wait for all kernels to finish
+    t1 = time.time()
+    dt = (t1 - t0) * 1000  # convert to milliseconds
+    token_per_sec = (train_loader.B * train_loader.T) / (t1-t0)  # tokens per second
+    print(f"step {i},loss: {loss.item()},dt:{dt:.2f}ms, tokens/sec: {token_per_sec:.2f}")
 import sys; sys.exit(0)
 
 #--------------------------------------------------------------------------------------
