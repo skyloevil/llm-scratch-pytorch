@@ -13,7 +13,7 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
 To install the required dependencies, run:
 
 ```bash
-pip install -r pytorch_gpt2_from_scratch/requirements.txt
+pip install -r requirements.txt
 ```
 
 If you have a CUDA-capable GPU and want to use CUDA for acceleration, make sure you have the appropriate CUDA toolkit and drivers installed. PyTorch will automatically use CUDA if available. You can verify CUDA is available in Python with:
