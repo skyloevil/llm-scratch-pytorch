@@ -1,7 +1,14 @@
 # llm-scratch-pytorch
 llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus on understanding the fundamentals of PyTorch and implementing LLMs from scratch,step by step.
 
-## Installation & Environment
+## Table of Contents
+1. [Installation](#installation)
+2. [Process](#process)
+3. [Reference](#reference)
+4. [Tools](#tools)
+5. [Acknowledgments](#acknowledgments)
+
+## Installation
 
 To install the required dependencies, run:
 
@@ -17,13 +24,6 @@ print(torch.cuda.is_available())
 ```
 
 If this prints `True`, your environment is ready for GPU acceleration.
-
-## Table of Contents
-1. [Introduction](#introduction)
-2. [Process](#process)
-3. [Reference](#reference)
-4. [Tools](#tools)
-5. [Acknowledgments](#acknowledgments)
 
 ## Process
 ### [Pytorch basis](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/pytorch_basis)
