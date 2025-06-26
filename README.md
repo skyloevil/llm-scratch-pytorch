@@ -49,8 +49,8 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [✅] data loader lite
 - [✅] parameter sharing wte and lm_head
 - [✅] model initialization: std 0.02, residual init
-- [❌] SECTION 2: Let’s make it fast. GPUs, mixed precision, 1000ms
-- [❌] Tensor Cores, timing the code, TF32 precision, 333ms
+- [✅] SECTION 2: Let’s make it fast. GPUs, mixed precision, 1000ms
+- [✅] Tensor Cores, timing the code, TF32 precision, 333ms
 - [❌] float16, gradient scalers, bfloat16, 300ms
 - [❌] torch.compile, Python overhead, kernel fusion, 130ms
 - [❌] flash attention, 96ms
