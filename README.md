@@ -90,15 +90,21 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [❌] Coding the Inference
 
 ## Reference
-- [pytorch_grad](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)
-- [computation_graph](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)
-- [forward & backward](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)
-- [build-nanogpt](https://github.com/karpathy/build-nanogpt)
-- [pytorch-llama](https://github.com/hkproj/pytorch-llama)
+
+Key educational resources and implementations that inspired this work:
+
+- **[PyTorch Grad Tutorials](https://github.com/chunhuizhang/bilibili_vlogs/tree/master/learn_torch/grad)**: Practical examples demonstrating PyTorch's automatic differentiation system and gradient computation.
+- **[Computation Graph Visualization](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/03_computation_graph.ipynb)**: Interactive notebook explaining how PyTorch constructs and traverses computation graphs during backpropagation.
+- **[Forward & Backward Pass](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)**: Step-by-step walkthrough of neural network forward/backward operations with PyTorch internals.
+- **[NanoGPT Implementation](https://github.com/karpathy/build-nanogpt)**: Andrej Karpathy's minimal GPT implementation that clearly demonstrates transformer architecture essentials.
+- **[PyTorch LLaMA](https://github.com/hkproj/pytorch-llama)**: Clean, hackable implementation of the LLaMA architecture in pure PyTorch for educational purposes.
 
 ## Tools
-- [tokenizer](https://tiktokenizer.vercel.app/)
-- [kvcache size calculator](https://lmcache.ai/kv_cache_calculator.html)
+
+We recommend the following tools to help with model development and optimization:
+
+- **[Tokenizer](https://tiktokenizer.vercel.app/)**: An interactive tokenizer playground that helps visualize and understand how text gets tokenized, useful for prompt engineering and debugging.
+- **[KV Cache Size Calculator](https://lmcache.ai/kv_cache_calculator.html)**: A handy calculator for estimating GPU memory requirements of key-value caches in transformer models, crucial for optimizing inference performance.
 
 ## Acknowledgments  
 
