@@ -233,6 +233,11 @@ print(f"using device: {device}")
 device_type = "cuda" if device.startswith("cuda") else "cpu"
 print(f"using device_type: {device}")
 #--------------------------------------------------------------------------------------
+torch.manual_seed(1337)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(1337)
+
+#--------------------------------------------------------------------------------------
 '''
 import tiktoken
 enc = tiktoken.get_encoding('gpt2')
@@ -283,7 +288,35 @@ for i in range(50):
     x,y = train_loader.next_batch()
     x,y = x.to(device),y.to(device)
     optimizer.zero_grad()
-    logits,loss = model(x,y)
+    '''
+    RTX 4000 Ada
+    before with torch.autocast(device_type=device_type, dtype=torch.bfloat16)
+    using device: cuda
+    using device_type: cuda
+    loaded 338025 tokens
+    1 epoch = 82 batches
+    step 0,loss: 10.928506851196289,dt:665.98ms, tokens/sec: 6150.37
+    step 1,loss: 9.525293350219727,dt:369.31ms, tokens/sec: 11090.90
+    step 2,loss: 8.986087799072266,dt:367.56ms, tokens/sec: 11143.78
+    step 3,loss: 8.699840545654297,dt:368.03ms, tokens/sec: 11129.46
+
+    after with torch.autocast(device_type=device_type, dtype=torch.bfloat16)
+    using device: cuda
+    using device_type: cuda
+    loaded 338025 tokens
+    1 epoch = 82 batches
+    step 0,loss: 10.928787231445312,dt:709.12ms, tokens/sec: 5776.17
+    step 1,loss: 9.524967193603516,dt:303.48ms, tokens/sec: 13496.70
+    step 2,loss: 8.98651123046875,dt:303.37ms, tokens/sec: 13501.68
+    step 3,loss: 8.700054168701172,dt:303.34ms, tokens/sec: 13502.80
+    '''
+    with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
+        logits,loss = model(x,y)
+        #import code; code.interact(local=locals())  # for debugging, you can inspect logits, loss, etc.
+        '''
+        model.transformer.h[0].attn.c_proj.weight.dtype
+        model.transformer.wte.weight.dtype
+        '''
     loss.backward()
     optimizer.step()
     torch.cuda.synchronize()  # wait for all kernels to finish
