@@ -253,6 +253,31 @@ train_loader = DataLoaderLite(B=4,T=1024)
 #get logits
 model = GPT(GPTConfig())
 model.to(device)
+'''
+RTX 4000 Ada
+before model = torch.compile(model) :
+using device: cuda
+using device_type: cuda
+loaded 338025 tokens
+1 epoch = 82 batches
+step 0,loss: 10.928787231445312,dt:709.12ms, tokens/sec: 5776.17
+step 1,loss: 9.524967193603516,dt:303.48ms, tokens/sec: 13496.70
+step 2,loss: 8.98651123046875,dt:303.37ms, tokens/sec: 13501.68
+step 3,loss: 8.700054168701172,dt:303.34ms, tokens/sec: 13502.80
+
+after model = torch.compile(model):
+using device: cuda
+using device_type: cuda
+loaded 338025 tokens
+1 epoch = 82 batches
+W0628 04:28:50.516000 5517 torch/_inductor/utils.py:1250] [0/0] Not enough SMs to use max_autotune_gemm mode
+step 0,loss: 10.928955078125,dt:26301.28ms, tokens/sec: 155.73
+step 1,loss: 9.525428771972656,dt:152.38ms, tokens/sec: 26880.97
+step 2,loss: 8.986692428588867,dt:152.37ms, tokens/sec: 26882.19
+step 3,loss: 8.701053619384766,dt:151.92ms, tokens/sec: 26962.05
+step 4,loss: 8.394303321838379,dt:151.58ms, tokens/sec: 27022.83
+'''
+model = torch.compile(model)  # compile the model for better performance
 #logits,loss = model(x,y)
 #print(loss)
 #tensor(11.0549, device='mps:0', grad_fn=<NllLossBackward0>) = -ln(1/50257)
@@ -268,9 +293,7 @@ loaded 338025 tokens
 step 0,loss: 10.90705680847168,dt:1243.05ms, tokens/sec: 6590.27
 step 1,loss: 9.505132675170898,dt:963.93ms, tokens/sec: 8498.56
 step 2,loss: 8.920276641845703,dt:961.54ms, tokens/sec: 8519.63
-'''
-torch.set_float32_matmul_precision("high")
-'''
+
 after torch.set_float32_matmul_precision("high"):
 using device: cuda
 using device_type: cuda
@@ -280,6 +303,7 @@ step 0,loss: 11.002205848693848,dt:971.97ms, tokens/sec: 8428.24
 step 1,loss: 9.620403289794922,dt:708.99ms, tokens/sec: 11554.42
 step 2,loss: 8.985677719116211,dt:709.15ms, tokens/sec: 11551.93
 '''
+torch.set_float32_matmul_precision("high")
 
 #optimize!
 optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4)
