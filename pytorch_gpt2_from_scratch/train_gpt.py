@@ -352,10 +352,11 @@ import sys; sys.exit(0)
 
 #--------------------------------------------------------------------------------------
 '''
+[CN]
 PyTorch 内部自动处理：在 model.eval() 模式下，nn.Dropout 会自动关闭，
 但 PyTorch 的 nn.Dropout 在训练时已经进行了 1/(1-p) 的放大，
 因此在测试时无需额外缩放（因为训练时的期望已经和测试时对齐）。
-
+[EN]
 PyTorch handles this automatically: in model.eval() mode, nn.Dropout is automatically disabled.
 Moreover, nn.Dropout in PyTorch already applies a scaling factor of 1/(1-p) during training,
 so no additional scaling is needed during evaluation (because the expected value during training is already aligned with evaluation).
