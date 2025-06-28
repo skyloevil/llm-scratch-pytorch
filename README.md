@@ -100,11 +100,16 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [tokenizer](https://tiktokenizer.vercel.app/)
 - [kvcache size calculator](https://lmcache.ai/kv_cache_calculator.html)
 
-## Acknowledgments
-- [pytorch](https://github.com/pytorch)
-- [chunhuizhang](https://github.com/chunhuizhang)
-- [Andrej Karpathy](https://github.com/karpathy)
-- [yihong0618](https://github.com/yihong0618)
-- [openai](https://github.com/openai)
-- [Hugging Face](https://github.com/huggingface)
-- [Umar Jamil](https://github.com/hkproj)
+## Acknowledgments  
+
+We sincerely appreciate the following individuals and organizations for their contributions and inspiration:  
+
+- **[PyTorch](https://github.com/pytorch)**: For building the foundational deep learning framework that powers this project. The PyTorch team’s dedication to open-source innovation has been invaluable.  
+- **[chunhuizhang](https://github.com/chunhuizhang)**: Thank you for your technical insights and collaborative efforts, which helped improve critical components of this work.  
+- **[Andrej Karpathy](https://github.com/karpathy)**: Your pioneering research and educational contributions in AI have deeply influenced our approach. We’re grateful for your leadership.  
+- **[yihong0618](https://github.com/yihong0618)**: Your creative implementations and open-source spirit have motivated us to push boundaries. Thank you for sharing your work with the world.
+- **[OpenAI](https://github.com/openai)**: For advancing the field with groundbreaking research and tools that empower projects like ours. Your commitment to ethical AI development sets a vital example.
+- **[Hugging Face](https://github.com/huggingface)**: For democratizing NLP with open models and libraries that accelerated our development. Your inclusive ecosystem sets a benchmark for the field.  
+- **[Umar Jamil](https://github.com/hkproj)**: Thank you for your detailed feedback, bug reports, and unwavering support—this project benefited greatly from your involvement.  
+
+This work thrives on the collective effort of open-source contributors; we aim to honor their spirit of collaboration.  
