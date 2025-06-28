@@ -2,11 +2,17 @@
 llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus on understanding the fundamentals of PyTorch and implementing LLMs from scratch,step by step.
 
 ## Table of Contents
-1. [Installation](#installation)
-2. [Process](#process)
-3. [Reference](#reference)
-4. [Tools](#tools)
-5. [Acknowledgments](#acknowledgments)
+- [llm-scratch-pytorch](#llm-scratch-pytorch)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Process](#process)
+    - [Pytorch basis](#pytorch-basis)
+      - [Grad](#grad)
+    - [GPT2 scratch](#gpt2-scratch)
+    - [LLaMA2 scratch](#llama2-scratch)
+  - [Reference](#reference)
+  - [Tools](#tools)
+  - [Acknowledgments](#acknowledgments)
 
 ## Installation
 
@@ -116,6 +122,6 @@ We sincerely appreciate the following individuals and organizations for their co
 - **[yihong0618](https://github.com/yihong0618)**: Your creative implementations and open-source spirit have motivated us to push boundaries. Thank you for sharing your work with the world.
 - **[OpenAI](https://github.com/openai)**: For advancing the field with groundbreaking research and tools that empower projects like ours. Your commitment to ethical AI development sets a vital example.
 - **[Hugging Face](https://github.com/huggingface)**: For democratizing NLP with open models and libraries that accelerated our development. Your inclusive ecosystem sets a benchmark for the field.  
-- **[Umar Jamil](https://github.com/hkproj)**: Thank you for your detailed feedback, bug reports, and unwavering support—this project benefited greatly from your involvement.  
+- **[Umar Jamil](https://github.com/hkproj)**: Your thoughtful feedback and technical expertise have strengthened this project. Thank you for your dedication and collaborative spirit.
 
 This work thrives on the collective effort of open-source contributors; we aim to honor their spirit of collaboration.  
