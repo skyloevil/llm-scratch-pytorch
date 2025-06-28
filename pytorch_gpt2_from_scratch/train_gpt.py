@@ -325,7 +325,7 @@ step 2,loss: 8.985677719116211,dt:709.15ms, tokens/sec: 11551.93
 torch.set_float32_matmul_precision("high")
 
 #optimize!
-optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4)
+optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4,betas=(0.9,0.95),eps=1e-8)
 for i in range(50):
     t0 = time.time()
     x,y = train_loader.next_batch()
@@ -353,12 +353,49 @@ for i in range(50):
         model.transformer.wte.weight.dtype
         '''
     loss.backward()
+    '''
+    [CN]
+    torch.nn.utils.clip_grad_norm_() 是一个原地操作（in-place operation，注意函数名末尾的下划线），它主要做两件事：
+    计算所有参数梯度的L2范数：首先它会计算模型所有可训练参数的梯度的L2范数（即所有梯度平方和开根号）。
+    按比例缩放梯度：如果这个范数超过了给定的阈值（这里是1.0），就会将所有梯度按比例缩放，使得它们的总范数等于这个阈值。
+    参数说明：
+    model.parameters()：获取模型中所有需要梯度更新的参数
+    1.0：设定的最大范数阈值
+    返回值norm是裁剪前的梯度范数（即原始梯度总范数）。
+    为什么要用梯度裁剪？
+    防止梯度爆炸（特别是在RNN中常见）
+    使训练过程更稳定
+    可以允许使用更大的学习率
+    数学表达：
+    如果原始梯度总范数为 total_norm，那么裁剪后的梯度为：
+    gradient * (max_norm / max(total_norm, max_norm))
+    这相当于当 total_norm > max_norm 时，所有梯度都会按比例缩小，使得新的总范数等于 max_norm。
+
+    [EN]
+    This code utilizes the gradient clipping functionality in PyTorch. Specifically:  
+    `torch.nn.utils.clip_grad_norm_()` is an in-place operation (note the underscore at the end of the function name), which performs two main tasks:  
+    1. **Compute the L2 norm of all parameter gradients**: First, it calculates the L2 norm (Euclidean norm) of the gradients across all trainable parameters (i.e., the square root of the sum of squared gradients).  
+    2. **Scale gradients proportionally**: If this norm exceeds the given threshold (here, `1.0`), it scales down all gradients proportionally so that their total norm equals this threshold.  
+    **Parameters**:  
+    - `model.parameters()`: Retrieves all trainable parameters of the model.  
+    - `1.0`: The maximum norm threshold.  
+    **Return value (`norm`)**: The original gradient norm before clipping.  
+    **Why use gradient clipping?**  
+    - Prevents **gradient explosion** (common in RNNs).  
+    - Makes training more stable.  
+    - Allows the use of higher learning rates.  
+    **Mathematical Formulation**:  
+    If the original gradient norm is `total_norm`, the clipped gradients become:  
+    `gradient * (max_norm / max(total_norm, max_norm))`  
+    This means that if `total_norm > max_norm`, all gradients are scaled down proportionally so that the new total norm equals `max_norm`.
+    '''
+    norm = torch.nn.utils.clip_grad_norm_(model.parameters(),1.0) # gradient clipping
     optimizer.step()
     torch.cuda.synchronize()  # wait for all kernels to finish
     t1 = time.time()
     dt = (t1 - t0) * 1000  # convert to milliseconds
     token_per_sec = (train_loader.B * train_loader.T) / (t1-t0)  # tokens per second
-    print(f"step {i},loss: {loss.item()},dt:{dt:.2f}ms, tokens/sec: {token_per_sec:.2f}")
+    print(f"step {i:4d} | loss: {loss.item():.6f} | norm:{norm:.4f} | dt:{dt:.2f}ms | tokens/sec: {token_per_sec:.2f}")
 import sys; sys.exit(0)
 
 #--------------------------------------------------------------------------------------

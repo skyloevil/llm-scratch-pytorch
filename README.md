@@ -62,7 +62,7 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [✅] torch.compile, Python overhead, kernel fusion, 130ms
 - [✅] flash attention, 96ms
 - [✅] nice/ugly numbers. vocab size 50257 → 50304, 93ms
-- [❌] SECTION 3: hyperpamaters, AdamW, gradient clipping
+- [✅] SECTION 3: hyperpamaters, AdamW, gradient clipping
 - [❌] learning rate scheduler: warmup + cosine decay
 - [❌] batch size schedule, weight decay, FusedAdamW, 90ms
 - [❌] gradient accumulation
