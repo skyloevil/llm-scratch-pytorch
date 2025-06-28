@@ -57,8 +57,8 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [✅] model initialization: std 0.02, residual init
 - [✅] SECTION 2: Let’s make it fast. GPUs, mixed precision, 1000ms
 - [✅] Tensor Cores, timing the code, TF32 precision, 333ms
-- [❌] float16, gradient scalers, bfloat16, 300ms
-- [❌] torch.compile, Python overhead, kernel fusion, 130ms
+- [✅] float16, gradient scalers, bfloat16, 300ms
+- [✅] torch.compile, Python overhead, kernel fusion, 130ms
 - [❌] flash attention, 96ms
 - [❌] nice/ugly numbers. vocab size 50257 → 50304, 93ms
 - [❌] SECTION 3: hyperpamaters, AdamW, gradient clipping
