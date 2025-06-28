@@ -169,7 +169,21 @@ class GPT(nn.Module):
             'gpt-xl':       dict(n_layer=48,n_head=25,n_embd=1600),
         }[model_type]
 
-        config_args['vocab_size'] = 50257
+        '''
+        before config_args['vocab_size'] = 50257 change to 50304,funny trick,nice/ugly numbers. vocab size 50257 → 50304~
+        W0628 10:22:49.362000 1640 torch/_inductor/utils.py:1250] [0/0] Not enough SMs to use max_autotune_gemm mode
+        step 0,loss: 10.929035186767578,dt:20899.85ms, tokens/sec: 195.98
+        step 1,loss: 9.525280952453613,dt:106.14ms, tokens/sec: 38590.84
+        step 2,loss: 8.98654556274414,dt:105.91ms, tokens/sec: 38675.54
+        step 3,loss: 8.700865745544434,dt:105.33ms, tokens/sec: 38887.49
+
+        after config_args['vocab_size'] = 50257 change to 50304
+        step 0,loss: 10.929035186767578,dt:1909.72ms, tokens/sec: 2144.82
+        step 1,loss: 9.525178909301758,dt:105.93ms, tokens/sec: 38666.66
+        step 2,loss: 8.98649787902832,dt:104.86ms, tokens/sec: 39063.45
+        step 3,loss: 8.700571060180664,dt:105.11ms, tokens/sec: 38970.49
+        '''
+        config_args['vocab_size'] = 50304
         config_args['block_size'] = 1024
 
         config = GPTConfig(**config_args)
