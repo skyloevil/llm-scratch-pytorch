@@ -59,7 +59,7 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [✅] Tensor Cores, timing the code, TF32 precision, 333ms
 - [✅] float16, gradient scalers, bfloat16, 300ms
 - [✅] torch.compile, Python overhead, kernel fusion, 130ms
-- [❌] flash attention, 96ms
+- [✅] flash attention, 96ms
 - [❌] nice/ugly numbers. vocab size 50257 → 50304, 93ms
 - [❌] SECTION 3: hyperpamaters, AdamW, gradient clipping
 - [❌] learning rate scheduler: warmup + cosine decay
