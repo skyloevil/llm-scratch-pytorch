@@ -10,6 +10,7 @@ llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus
       - [Grad](#grad)
     - [GPT2 scratch](#gpt2-scratch)
     - [LLaMA2 scratch](#llama2-scratch)
+    - [Flash Attention scrach](#flash-attention-scratch)
   - [Reference](#reference)
   - [Tools](#tools)
   - [Acknowledgments](#acknowledgments)
@@ -95,6 +96,30 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [❌] Top P
 - [❌] Coding the Inference
 
+### [Flash Attention scratch](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/triton_flash_attention_scatch)
+- [❌] Multi-Head Attention
+- [❌] Why Flash Attention
+- [❌] Safe Softmax
+- [❌] Online Softmax
+- [❌] Online Softmax (Proof)
+- [❌] Block Matrix Multiplication
+- [❌] Flash Attention forward (by hand)
+- [❌] Flash Attention forward (paper)
+- [❌] Intro to CUDA with examples
+- [❌] Tensor Layouts
+- [❌] Intro to Triton with examples
+- [❌] Flash Attention forward (coding)
+- [❌] LogSumExp trick in Flash Attention 2
+- [❌] Derivatives, gradients, Jacobians
+- [❌] Autograd
+- [❌] Jacobian of the MatMul operation
+- [❌] Jacobian through the Softmax
+- [❌] Flash Attention backwards (paper)
+- [❌] Flash Attention backwards (coding)
+- [❌] Triton Autotuning
+- [❌] Triton tricks: software pipelining
+- [❌] Running the code
+
 ## Reference
 
 Key educational resources and implementations that inspired this work:
@@ -104,6 +129,7 @@ Key educational resources and implementations that inspired this work:
 - **[Forward & Backward Pass](https://github.com/chunhuizhang/bilibili_vlogs/blob/master/learn_torch/grad/04_backward_step.ipynb)**: Step-by-step walkthrough of neural network forward/backward operations with PyTorch internals.
 - **[NanoGPT Implementation](https://github.com/karpathy/build-nanogpt)**: Andrej Karpathy's minimal GPT implementation that clearly demonstrates transformer architecture essentials.
 - **[PyTorch LLaMA](https://github.com/hkproj/pytorch-llama)**: Clean, hackable implementation of the LLaMA architecture in pure PyTorch for educational purposes.
+- **[Triton & Cuda Flash Attention](https://github.com/hkproj/triton-flash-attention)**: Reference implementation of Flash Attention using Triton and CUDA, providing efficient attention mechanisms for large language models.
 
 ## Tools
 
