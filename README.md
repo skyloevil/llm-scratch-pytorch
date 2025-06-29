@@ -32,6 +32,16 @@ print(torch.cuda.is_available())
 
 If this prints `True`, your environment is ready for GPU acceleration.
 
+If you don't have a  **local GPU environment**, we recommend using Runpod cloud environment for installation:
+
+Runpod referral link: https://runpod.io?ref=4dzcggxy
+
+By using this link, you'll get:
+
+A one-time random credit bonus from $5-$500 when you sign up using the referral link and spend $10
+
+Instant access to GPU resources to get started right away
+
 ## Process
 ### [Pytorch basis](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/pytorch_basis)
 #### [Grad](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/pytorch_basis/computation_gragh)
