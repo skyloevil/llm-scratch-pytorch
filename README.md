@@ -96,7 +96,7 @@ If this prints `True`, your environment is ready for GPU acceleration.
 - [❌] Top P
 - [❌] Coding the Inference
 
-### [Flash Attention scratch](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/triton_flash_attention_scatch)
+### [Flash Attention scratch](https://github.com/skyloevil/llm-scratch-pytorch/tree/main/triton_flash_attention_scratch)
 - [❌] Multi-Head Attention
 - [❌] Why Flash Attention
 - [❌] Safe Softmax
