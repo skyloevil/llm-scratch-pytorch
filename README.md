@@ -69,7 +69,7 @@ By using this link, you'll get:
 - [✅] flash attention, 96ms
 - [✅] nice/ugly numbers. vocab size 50257 → 50304, 93ms
 - [✅] SECTION 3: hyperpamaters, AdamW, gradient clipping
-- [❌] learning rate scheduler: warmup + cosine decay
+- [✅] learning rate scheduler: warmup + cosine decay
 - [❌] batch size schedule, weight decay, FusedAdamW, 90ms
 - [❌] gradient accumulation
 - [❌] distributed data parallel (DDP)
