@@ -324,6 +324,75 @@ step 2,loss: 8.985677719116211,dt:709.15ms, tokens/sec: 11551.93
 '''
 torch.set_float32_matmul_precision("high")
 
+#--------------------------------------------------------------------------------------
+'''
+step    0 | loss: 10.929035 | lr 6.000000e-05 |norm:31.1151 | dt:22156.18ms | tokens/sec: 184.87
+step    1 | loss: 9.625555 | lr 1.200000e-04 |norm:9.9653 | dt:111.46ms | tokens/sec: 36750.11
+step    2 | loss: 9.288238 | lr 1.800000e-04 |norm:8.5428 | dt:111.12ms | tokens/sec: 36861.53
+step    3 | loss: 9.759915 | lr 2.400000e-04 |norm:7.5720 | dt:111.11ms | tokens/sec: 36863.19
+step    4 | loss: 9.020742 | lr 3.000000e-04 |norm:4.5275 | dt:111.40ms | tokens/sec: 36769.15
+step    5 | loss: 8.418500 | lr 3.600000e-04 |norm:4.1224 | dt:110.43ms | tokens/sec: 37091.85
+step    6 | loss: 8.204685 | lr 4.200000e-04 |norm:2.3306 | dt:110.41ms | tokens/sec: 37097.22
+step    7 | loss: 7.944987 | lr 4.800000e-04 |norm:2.9877 | dt:110.24ms | tokens/sec: 37156.19
+step    8 | loss: 7.707809 | lr 5.400000e-04 |norm:1.7011 | dt:110.39ms | tokens/sec: 37104.91
+step    9 | loss: 7.291522 | lr 6.000000e-04 |norm:2.2257 | dt:110.29ms | tokens/sec: 37137.47
+step   10 | loss: 7.133273 | lr 6.000000e-04 |norm:1.7963 | dt:111.18ms | tokens/sec: 36840.43
+step   11 | loss: 7.066081 | lr 5.991677e-04 |norm:1.1539 | dt:111.76ms | tokens/sec: 36649.21
+step   12 | loss: 7.146005 | lr 5.966759e-04 |norm:1.5587 | dt:111.37ms | tokens/sec: 36777.57
+step   13 | loss: 7.006813 | lr 5.925399e-04 |norm:1.2228 | dt:110.89ms | tokens/sec: 36935.87
+step   14 | loss: 6.611938 | lr 5.867853e-04 |norm:1.3372 | dt:112.25ms | tokens/sec: 36489.17
+step   15 | loss: 6.623370 | lr 5.794475e-04 |norm:0.9707 | dt:112.37ms | tokens/sec: 36449.92
+step   16 | loss: 6.529044 | lr 5.705718e-04 |norm:1.6986 | dt:111.78ms | tokens/sec: 36644.37
+step   17 | loss: 6.312853 | lr 5.602128e-04 |norm:1.1591 | dt:111.04ms | tokens/sec: 36888.68
+step   18 | loss: 6.561875 | lr 5.484346e-04 |norm:2.4942 | dt:110.86ms | tokens/sec: 36948.42
+step   19 | loss: 6.499338 | lr 5.353096e-04 |norm:1.0101 | dt:111.48ms | tokens/sec: 36741.31
+step   20 | loss: 6.817120 | lr 5.209188e-04 |norm:2.7525 | dt:111.70ms | tokens/sec: 36668.61
+step   21 | loss: 6.587343 | lr 5.053510e-04 |norm:1.7314 | dt:111.09ms | tokens/sec: 36872.45
+step   22 | loss: 6.682228 | lr 4.887020e-04 |norm:1.2198 | dt:111.40ms | tokens/sec: 36768.83
+step   23 | loss: 6.741624 | lr 4.710746e-04 |norm:0.9836 | dt:110.95ms | tokens/sec: 36918.96
+step   24 | loss: 6.741573 | lr 4.525774e-04 |norm:0.8798 | dt:111.48ms | tokens/sec: 36743.20
+step   25 | loss: 6.685856 | lr 4.333245e-04 |norm:0.9160 | dt:111.27ms | tokens/sec: 36810.98
+step   26 | loss: 6.539587 | lr 4.134346e-04 |norm:1.1471 | dt:111.57ms | tokens/sec: 36711.63
+step   27 | loss: 6.574798 | lr 3.930302e-04 |norm:1.0432 | dt:111.68ms | tokens/sec: 36675.89
+step   28 | loss: 6.570073 | lr 3.722373e-04 |norm:1.0808 | dt:113.06ms | tokens/sec: 36227.25
+step   29 | loss: 6.408570 | lr 3.511840e-04 |norm:0.8717 | dt:111.75ms | tokens/sec: 36652.50
+step   30 | loss: 6.305978 | lr 3.300000e-04 |norm:0.9523 | dt:111.85ms | tokens/sec: 36621.40
+step   31 | loss: 6.239697 | lr 3.088160e-04 |norm:1.0876 | dt:110.93ms | tokens/sec: 36922.77
+step   32 | loss: 6.408067 | lr 2.877627e-04 |norm:0.9818 | dt:111.74ms | tokens/sec: 36655.00
+step   33 | loss: 6.549937 | lr 2.669698e-04 |norm:0.9403 | dt:110.56ms | tokens/sec: 37047.78
+step   34 | loss: 6.536313 | lr 2.465654e-04 |norm:1.0917 | dt:111.08ms | tokens/sec: 36872.69
+step   35 | loss: 6.536059 | lr 2.266755e-04 |norm:1.1388 | dt:110.58ms | tokens/sec: 37042.19
+step   36 | loss: 6.382875 | lr 2.074226e-04 |norm:0.9951 | dt:110.33ms | tokens/sec: 37123.67
+step   37 | loss: 6.546589 | lr 1.889254e-04 |norm:0.9262 | dt:111.21ms | tokens/sec: 36830.87
+step   38 | loss: 6.326313 | lr 1.712980e-04 |norm:0.8783 | dt:112.48ms | tokens/sec: 36414.69
+step   39 | loss: 6.165541 | lr 1.546490e-04 |norm:0.9403 | dt:110.86ms | tokens/sec: 36947.70
+step   40 | loss: 6.288169 | lr 1.390812e-04 |norm:0.9853 | dt:111.14ms | tokens/sec: 36855.60
+step   41 | loss: 6.377492 | lr 1.246904e-04 |norm:1.0718 | dt:111.51ms | tokens/sec: 36730.55
+step   42 | loss: 6.172297 | lr 1.115654e-04 |norm:1.0675 | dt:111.91ms | tokens/sec: 36600.34
+step   43 | loss: 6.149868 | lr 9.978716e-05 |norm:0.8971 | dt:112.93ms | tokens/sec: 36271.39
+step   44 | loss: 6.309943 | lr 8.942824e-05 |norm:0.8781 | dt:111.16ms | tokens/sec: 36848.88
+step   45 | loss: 6.226062 | lr 8.055253e-05 |norm:0.7721 | dt:111.04ms | tokens/sec: 36886.06
+step   46 | loss: 6.104761 | lr 7.321474e-05 |norm:0.7722 | dt:111.05ms | tokens/sec: 36885.91
+step   47 | loss: 6.129297 | lr 6.746012e-05 |norm:1.0375 | dt:111.67ms | tokens/sec: 36678.24
+step   48 | loss: 6.180681 | lr 6.332415e-05 |norm:0.8881 | dt:112.38ms | tokens/sec: 36448.69
+step   49 | loss: 6.077621 | lr 6.083232e-05 |norm:0.9115 | dt:111.72ms | tokens/sec: 36662.98
+'''
+max_lr = 6e-4
+min_lr = max_lr * 0.1
+warmup_steps = 10
+max_steps = 50
+def get_lr(it):
+    if it < warmup_steps:
+        return max_lr * (it+1) / warmup_steps
+    if it > max_steps:
+        return min_lr
+    # use cosine decay down to min_lr
+    decay_ratio = (it-warmup_steps) / (max_steps - warmup_steps)
+    assert 0 <= decay_ratio <= 1, f"decay_ratio {decay_ratio} out of bounds"
+    coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # cos from 1 to -1 # coeff starts at 1 and goes to 0
+    return min_lr + coeff * (max_lr - min_lr) 
+#--------------------------------------------------------------------------------------
+
 #optimize!
 optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4,betas=(0.9,0.95),eps=1e-8)
 for i in range(50):
@@ -390,12 +459,15 @@ for i in range(50):
     This means that if `total_norm > max_norm`, all gradients are scaled down proportionally so that the new total norm equals `max_norm`.
     '''
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(),1.0) # gradient clipping
+    lr = get_lr(i)  # learning rate scheduling
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
     optimizer.step()
     torch.cuda.synchronize()  # wait for all kernels to finish
     t1 = time.time()
     dt = (t1 - t0) * 1000  # convert to milliseconds
     token_per_sec = (train_loader.B * train_loader.T) / (t1-t0)  # tokens per second
-    print(f"step {i:4d} | loss: {loss.item():.6f} | norm:{norm:.4f} | dt:{dt:.2f}ms | tokens/sec: {token_per_sec:.2f}")
+    print(f"step {i:4d} | loss: {loss.item():.6f} | lr {lr:4e} |norm:{norm:.4f} | dt:{dt:.2f}ms | tokens/sec: {token_per_sec:.2f}")
 import sys; sys.exit(0)
 
 #--------------------------------------------------------------------------------------
