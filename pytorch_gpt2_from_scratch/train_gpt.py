@@ -427,6 +427,12 @@ def get_lr(it):
 
 #optimize!
 #optimizer = torch.optim.AdamW(model.parameters(),lr=3e-4,betas=(0.9,0.95),eps=1e-8)
+'''
+    configure_optimizers
+    num decayed parameter tensors: 50, with 124,318,464 parameters
+    num non-decayed parameter tensors: 98, with 121,344 parameters
+    using fused AdamW: True
+'''
 optimizer = model.configure_optimizers(weight_decay=0.1, learning_rate=6e-4, device=device)
 for i in range(50):
     t0 = time.time()
