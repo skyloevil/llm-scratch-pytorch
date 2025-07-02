@@ -71,7 +71,7 @@ By using this link, you'll get:
 - [✅] SECTION 3: hyperpamaters, AdamW, gradient clipping
 - [✅] learning rate scheduler: warmup + cosine decay
 - [✅] batch size schedule, weight decay, FusedAdamW, 90ms
-- [❌] gradient accumulation
+- [✅] gradient accumulation
 - [❌] distributed data parallel (DDP)
 - [❌] datasets used in GPT-2, GPT-3, FineWeb (EDU)
 - [❌] validation data split, validation loss, sampling revive
