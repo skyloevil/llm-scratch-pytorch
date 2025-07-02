@@ -316,6 +316,15 @@ buf = torch.tensor(tokens[:B*T+1])
 x = buf[:-1].view(B,T).to(device)
 y = buf[1:].view(B,T).to(device)
 '''
+
+total_batch_size = 2**19
+B = 16
+T = 1024
+assert total_batch_size % (B*T) == 0, "total_batch_size must be divisible by B * T"
+grad_accum_steps = total_batch_size // (B * T)
+print("total disired batch size: ", total_batch_size)
+print("=> caculated grad_accum_steps: ", grad_accum_steps)
+
 train_loader = DataLoaderLite(B=4,T=1024)
 #get logits
 model = GPT(GPTConfig())
@@ -434,7 +443,7 @@ def get_lr(it):
     using fused AdamW: True
 '''
 optimizer = model.configure_optimizers(weight_decay=0.1, learning_rate=6e-4, device=device)
-for i in range(50):
+for i in range(max_steps):
     t0 = time.time()
     x,y = train_loader.next_batch()
     x,y = x.to(device),y.to(device)
@@ -453,14 +462,18 @@ for i in range(50):
     step 2,loss: 8.98651123046875,dt:303.37ms, tokens/sec: 13501.68
     step 3,loss: 8.700054168701172,dt:303.34ms, tokens/sec: 13502.80
     '''
-    with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
-        logits,loss = model(x,y)
-        #import code; code.interact(local=locals())  # for debugging, you can inspect logits, loss, etc.
-        '''
-        model.transformer.h[0].attn.c_proj.weight.dtype
-        model.transformer.wte.weight.dtype
-        '''
-    loss.backward()
+    for micro_step in range(grad_accum_steps):
+        x,y = train_loader.next_batch()
+        x,y = x.to(device),y.to(device)
+        with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
+            logits,loss = model(x,y)
+            #import code; code.interact(local=locals())  # for debugging, you can inspect logits, loss, etc.
+            '''
+            model.transformer.h[0].attn.c_proj.weight.dtype
+            model.transformer.wte.weight.dtype
+            '''
+        loss = loss / grad_accum_steps  # scale the loss for gradient accumulation
+        loss.backward()
     '''
     [CN]
     torch.nn.utils.clip_grad_norm_() 是一个原地操作（in-place operation，注意函数名末尾的下划线），它主要做两件事：
