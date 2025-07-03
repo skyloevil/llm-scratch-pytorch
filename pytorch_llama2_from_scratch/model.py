@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import math
 
 class RMSNorm(nn.Module):
     def __init__(self, dim: int, eps: float = 1e-6):
@@ -245,3 +246,163 @@ class FeedForward(nn.Module):
         x = self.w2(x)
         
         return x
+
+class SelfAttention(nn.Module):
+    def __init__(self, dim: int, n_heads: int, n_kv_heads: int):
+        """
+        Initialize the SelfAttention module.
+        
+        Args:
+            dim (int): The input dimension.
+            n_heads (int): The number of heads for queries.
+            n_kv_heads (int): The number of heads for keys and values.
+
+        ---
+        初始化 SelfAttention 模块。
+
+        参数:
+            dim (int): 输入维度。
+            n_heads (int): 查询（queries）的头的数量。
+            n_kv_heads (int): 键（keys）和值（values）的头的数量。
+        """
+        super().__init__()
+        self.n_heads = n_heads
+        self.n_kv_heads = n_kv_heads
+        self.head_dim = dim // n_heads
+        
+        self.wq = nn.Linear(dim, n_heads * self.head_dim, bias=False)
+        self.wk = nn.Linear(dim, n_kv_heads * self.head_dim, bias=False)
+        self.wv = nn.Linear(dim, n_kv_heads * self.head_dim, bias=False)
+        self.wo = nn.Linear(n_heads * self.head_dim, dim, bias=False)
+
+    def forward(self, x: torch.Tensor, freqs_complex: torch.Tensor, mask: torch.Tensor):
+        """
+        Forward pass for the SelfAttention module.
+        
+        Args:
+            x (torch.Tensor): The input tensor.
+            freqs_complex (torch.Tensor): The precomputed complex frequencies for RoPE.
+            mask (torch.Tensor): The attention mask.
+        
+        Returns:
+            torch.Tensor: The output tensor after self-attention.
+
+        ---
+        SelfAttention 模块的前向传播。
+
+        参数:
+            x (torch.Tensor): 输入张量。
+            freqs_complex (torch.Tensor): 用于 RoPE 的预计算复数频率。
+            mask (torch.Tensor): 注意力掩码。
+
+        返回:
+            torch.Tensor: 经过自注意力处理后的输出张量。
+        """
+        batch_size, seq_len, _ = x.shape
+
+        # (B, Seq_Len, Dim) -> (B, Seq_Len, H_Q * Head_Dim)
+        xq = self.wq(x)
+        # (B, Seq_Len, Dim) -> (B, Seq_Len, H_KV * Head_Dim)
+        xk = self.wk(x)
+        # (B, Seq_Len, Dim) -> (B, Seq_Len, H_KV * Head_Dim)
+        xv = self.wv(x)
+
+        # (B, Seq_Len, H_Q * Head_Dim) -> (B, Seq_Len, H_Q, Head_Dim)
+        xq = xq.view(batch_size, seq_len, self.n_heads, self.head_dim)
+        # (B, Seq_Len, H_KV * Head_Dim) -> (B, Seq_Len, H_KV, Head_Dim)
+        xk = xk.view(batch_size, seq_len, self.n_kv_heads, self.head_dim)
+        # (B, Seq_Len, H_KV * Head_Dim) -> (B, Seq_Len, H_KV, Head_Dim)
+        xv = xv.view(batch_size, seq_len, self.n_kv_heads, self.head_dim)
+
+        # Apply rotary embeddings
+        # 应用旋转位置嵌入
+        xq = apply_rotary_embeddings(xq, freqs_complex, device=x.device)
+        xk = apply_rotary_embeddings(xk, freqs_complex, device=x.device)
+
+        # Grouped Query Attention
+        # 如果 H_KV < H_Q, 我们需要重复 K 和 V 张量来匹配 Q 的头的数量
+        if self.n_kv_heads < self.n_heads:
+            n_rep = self.n_heads // self.n_kv_heads
+            xk = xk.repeat_interleave(n_rep, dim=2)
+            xv = xv.repeat_interleave(n_rep, dim=2)
+
+        # (B, Seq_Len, H, Head_Dim) -> (B, H, Seq_Len, Head_Dim)
+        xq = xq.transpose(1, 2)
+        xk = xk.transpose(1, 2)
+        xv = xv.transpose(1, 2)
+
+        # (B, H, Seq_Len, Head_Dim) @ (B, H, Head_Dim, Seq_Len) -> (B, H, Seq_Len, Seq_Len)
+        scores = torch.matmul(xq, xk.transpose(2, 3)) / math.sqrt(self.head_dim)
+        scores.masked_fill_(mask == 0, float('-inf'))
+        scores = F.softmax(scores, dim=-1).type_as(xq)
+
+        # (B, H, Seq_Len, Seq_Len) @ (B, H, Seq_Len, Head_Dim) -> (B, H, Seq_Len, Head_Dim)
+        output = torch.matmul(scores, xv)
+
+        # (B, H, Seq_Len, Head_Dim) -> (B, Seq_Len, H, Head_Dim) -> (B, Seq_Len, Dim)
+        output = output.transpose(1, 2).contiguous().view(batch_size, seq_len, -1)
+        
+        # (B, Seq_Len, Dim) -> (B, Seq_Len, Dim)
+        return self.wo(output)
+
+class EncoderLayer(nn.Module):
+    def __init__(self, dim: int, n_heads: int, n_kv_heads: int, multiple_of: int):
+        """
+        Initialize the EncoderLayer module.
+        
+        Args:
+            dim (int): The input dimension.
+            n_heads (int): The number of heads for queries.
+            n_kv_heads (int): The number of heads for keys and values.
+            multiple_of (int): A value to ensure the hidden dimension is a multiple of this.
+
+        ---
+        初始化 EncoderLayer 模块。
+
+        参数:
+            dim (int): 输入维度。
+            n_heads (int): 查询（queries）的头的数量。
+            n_kv_heads (int): 键（keys）和值（values）的头的数量。
+            multiple_of (int): 一个值，确保隐藏维度是这个值的倍数。
+        """
+        super().__init__()
+        hidden_dim = 4 * dim
+        hidden_dim = int(2 * hidden_dim / 3)
+        hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
+
+        self.attention = SelfAttention(dim, n_heads, n_kv_heads)
+        self.feed_forward = FeedForward(dim, hidden_dim)
+        self.attention_norm = RMSNorm(dim)
+        self.ffn_norm = RMSNorm(dim)
+
+    def forward(self, x: torch.Tensor, freqs_complex: torch.Tensor, mask: torch.Tensor):
+        """
+        Forward pass for the EncoderLayer module.
+        
+        Args:
+            x (torch.Tensor): The input tensor.
+            freqs_complex (torch.Tensor): The precomputed complex frequencies for RoPE.
+            mask (torch.Tensor): The attention mask.
+        
+        Returns:
+            torch.Tensor: The output tensor after passing through the encoder layer.
+
+        ---
+        EncoderLayer 模块的前向传播。
+
+        参数:
+            x (torch.Tensor): ��入张量。
+            freqs_complex (torch.Tensor): 用于 RoPE 的预计算复数频率。
+            mask (torch.Tensor): 注意力掩码。
+
+        返回:
+            torch.Tensor: 通过编码器层后的输出张量。
+        """
+        # Pre-normalization and residual connection for attention
+        # 注意力层的预归一化和残差连接
+        h = x + self.attention(self.attention_norm(x), freqs_complex, mask)
+        
+        # Pre-normalization and residual connection for feed-forward
+        # 前馈层的预归一化和残差连接
+        out = h + self.feed_forward(self.ffn_norm(h))
+        return out
