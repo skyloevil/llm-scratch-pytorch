@@ -2,6 +2,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class ModelArgs:
+    dim: int = 4096
+    n_layers: int = 32
+    n_heads: int = 32
+    n_kv_heads: Optional[int] = None
+    vocab_size: int = -1 # Later set in the build method
+    multiple_of: int = 256
+    ffn_dim_multiplier: Optional[float] = None
+    norm_eps: float = 1e-5
+    max_seq_len: int = 2048
+    device: str = "cuda" if torch.cuda.is_available() else "cpu"
 
 class RMSNorm(nn.Module):
     def __init__(self, dim: int, eps: float = 1e-6):
@@ -248,32 +263,28 @@ class FeedForward(nn.Module):
         return x
 
 class SelfAttention(nn.Module):
-    def __init__(self, dim: int, n_heads: int, n_kv_heads: int):
+    def __init__(self, args: ModelArgs):
         """
         Initialize the SelfAttention module.
         
         Args:
-            dim (int): The input dimension.
-            n_heads (int): The number of heads for queries.
-            n_kv_heads (int): The number of heads for keys and values.
+            args (ModelArgs): The arguments for the model.
 
         ---
         初始化 SelfAttention 模块。
 
         参数:
-            dim (int): 输入维度。
-            n_heads (int): 查询（queries）的头的数量。
-            n_kv_heads (int): 键（keys）和值（values）的头的数量。
+            args (ModelArgs): 模型的参数。
         """
         super().__init__()
-        self.n_heads = n_heads
-        self.n_kv_heads = n_kv_heads
-        self.head_dim = dim // n_heads
+        self.n_heads = args.n_heads
+        self.n_kv_heads = args.n_heads if args.n_kv_heads is None else args.n_kv_heads
+        self.head_dim = args.dim // args.n_heads
         
-        self.wq = nn.Linear(dim, n_heads * self.head_dim, bias=False)
-        self.wk = nn.Linear(dim, n_kv_heads * self.head_dim, bias=False)
-        self.wv = nn.Linear(dim, n_kv_heads * self.head_dim, bias=False)
-        self.wo = nn.Linear(n_heads * self.head_dim, dim, bias=False)
+        self.wq = nn.Linear(args.dim, args.n_heads * self.head_dim, bias=False)
+        self.wk = nn.Linear(args.dim, self.n_kv_heads * self.head_dim, bias=False)
+        self.wv = nn.Linear(args.dim, self.n_kv_heads * self.head_dim, bias=False)
+        self.wo = nn.Linear(args.n_heads * self.head_dim, args.dim, bias=False)
 
     def forward(self, x: torch.Tensor, freqs_complex: torch.Tensor, mask: torch.Tensor):
         """
@@ -291,7 +302,7 @@ class SelfAttention(nn.Module):
         SelfAttention 模块的前向传播。
 
         参数:
-            x (torch.Tensor): 输入张量。
+            x (torch.Tensor): 输入���量。
             freqs_complex (torch.Tensor): 用于 RoPE 的预计算复数频率。
             mask (torch.Tensor): 注意力掩码。
 
@@ -346,34 +357,36 @@ class SelfAttention(nn.Module):
         return self.wo(output)
 
 class EncoderLayer(nn.Module):
-    def __init__(self, dim: int, n_heads: int, n_kv_heads: int, multiple_of: int):
+    def __init__(self, args: ModelArgs):
         """
         Initialize the EncoderLayer module.
         
         Args:
-            dim (int): The input dimension.
-            n_heads (int): The number of heads for queries.
-            n_kv_heads (int): The number of heads for keys and values.
-            multiple_of (int): A value to ensure the hidden dimension is a multiple of this.
+            args (ModelArgs): The arguments for the model.
 
         ---
         初始化 EncoderLayer 模块。
 
         参数:
-            dim (int): 输入维度。
-            n_heads (int): 查询（queries）的头的数量。
-            n_kv_heads (int): 键（keys）和值（values）的头的数量。
-            multiple_of (int): 一个值，确保隐藏维度是这个值的倍数。
+            args (ModelArgs): 模型的参数。
         """
         super().__init__()
-        hidden_dim = 4 * dim
+        self.n_heads = args.n_heads
+        self.dim = args.dim
+        self.head_dim = args.dim // args.n_heads
+        
+        hidden_dim = 4 * self.dim
         hidden_dim = int(2 * hidden_dim / 3)
-        hidden_dim = multiple_of * ((hidden_dim + multiple_of - 1) // multiple_of)
+        if args.ffn_dim_multiplier is not None:
+            hidden_dim = int(args.ffn_dim_multiplier * hidden_dim)
+        # Round the hidden_dim to the nearest multiple of the multiple_of parameter
+        # 将 hidden_dim 四舍五入到 multiple_of 参数的最近倍数
+        hidden_dim = args.multiple_of * ((hidden_dim + args.multiple_of - 1) // args.multiple_of)
 
-        self.attention = SelfAttention(dim, n_heads, n_kv_heads)
-        self.feed_forward = FeedForward(dim, hidden_dim)
-        self.attention_norm = RMSNorm(dim)
-        self.ffn_norm = RMSNorm(dim)
+        self.attention = SelfAttention(args)
+        self.feed_forward = FeedForward(self.dim, hidden_dim)
+        self.attention_norm = RMSNorm(self.dim, eps=args.norm_eps)
+        self.ffn_norm = RMSNorm(self.dim, eps=args.norm_eps)
 
     def forward(self, x: torch.Tensor, freqs_complex: torch.Tensor, mask: torch.Tensor):
         """
@@ -391,7 +404,7 @@ class EncoderLayer(nn.Module):
         EncoderLayer 模块的前向传播。
 
         参数:
-            x (torch.Tensor): ��入张量。
+            x (torch.Tensor): 输入张量。
             freqs_complex (torch.Tensor): 用于 RoPE 的预计算复数频率。
             mask (torch.Tensor): 注意力掩码。
 
@@ -406,3 +419,72 @@ class EncoderLayer(nn.Module):
         # 前馈层的预归一化和残差连接
         out = h + self.feed_forward(self.ffn_norm(h))
         return out
+
+class Transformer(nn.Module):
+    def __init__(self, args: ModelArgs):
+        """
+        Initialize the Transformer module.
+        
+        Args:
+            args (ModelArgs): The arguments for the model.
+
+        ---
+        初始化 Transformer 模块。
+
+        参数:
+            args (ModelArgs): 模型的参数。
+        """
+        super().__init__()
+        self.args = args
+        self.vocab_size = args.vocab_size
+        self.n_layers = args.n_layers
+        
+        self.tok_embeddings = nn.Embedding(self.vocab_size, args.dim)
+        
+        self.layers = nn.ModuleList()
+        for _ in range(args.n_layers):
+            self.layers.append(EncoderLayer(args))
+            
+        self.norm = RMSNorm(args.dim, eps=args.norm_eps)
+        self.output = nn.Linear(args.dim, self.vocab_size, bias=False)
+        
+        self.freqs_complex = precompute_theta_pos_frequencies(self.args.dim // self.args.n_heads, self.args.max_seq_len * 2, device=self.args.device)
+
+    def forward(self, tokens: torch.Tensor, start_pos: int):
+        """
+        Forward pass for the Transformer module.
+        
+        Args:
+            tokens (torch.Tensor): The input token IDs.
+            start_pos (int): The starting position for the sequence.
+        
+        Returns:
+            torch.Tensor: The output logits.
+
+        ---
+        Transformer 模块的前向传播。
+
+        参数:
+            tokens (torch.Tensor): 输入的 token ID。
+            start_pos (int): 序列的起始位置。
+
+        返回:
+            torch.Tensor: 输出的 logits。
+        """
+        batch_size, seq_len = tokens.shape
+        assert seq_len == 1, "Only one token at a time can be processed"
+        
+        h = self.tok_embeddings(tokens)
+        
+        self.freqs_complex = self.freqs_complex.to(h.device)
+        freqs_complex = self.freqs_complex[start_pos:start_pos + seq_len]
+        
+        mask = torch.full((seq_len, seq_len), float("-inf"), device=h.device)
+        mask = torch.triu(mask, diagonal=1)
+        
+        for layer in self.layers:
+            h = layer(h, freqs_complex, mask)
+            
+        h = self.norm(h)
+        output = self.output(h).float()
+        return output
