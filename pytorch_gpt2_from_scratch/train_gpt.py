@@ -325,7 +325,7 @@ grad_accum_steps = total_batch_size // (B * T)
 print("total disired batch size: ", total_batch_size)
 print("=> caculated grad_accum_steps: ", grad_accum_steps)
 
-train_loader = DataLoaderLite(B=4,T=1024)
+train_loader = DataLoaderLite(B,T)
 #get logits
 model = GPT(GPTConfig())
 model.to(device)
@@ -448,6 +448,7 @@ for i in range(max_steps):
     x,y = train_loader.next_batch()
     x,y = x.to(device),y.to(device)
     optimizer.zero_grad()
+    loss_accum = 0.0
     '''
     RTX 4000 Ada
     before with torch.autocast(device_type=device_type, dtype=torch.bfloat16)
@@ -473,6 +474,7 @@ for i in range(max_steps):
             model.transformer.wte.weight.dtype
             '''
         loss = loss / grad_accum_steps  # scale the loss for gradient accumulation
+        loss_accum += loss.detach()
         loss.backward()
     '''
     [CN]
@@ -519,7 +521,7 @@ for i in range(max_steps):
     t1 = time.time()
     dt = (t1 - t0) * 1000  # convert to milliseconds
     token_per_sec = (train_loader.B * train_loader.T) / (t1-t0)  # tokens per second
-    print(f"step {i:4d} | loss: {loss.item():.6f} | lr {lr:4e} |norm:{norm:.4f} | dt:{dt:.2f}ms | tokens/sec: {token_per_sec:.2f}")
+    print(f"step {i:4d} | loss: {loss_accum.item():.6f} | lr {lr:4e} |norm:{norm:.4f} | dt:{dt:.2f}ms | tokens/sec: {token_per_sec:.2f}")
 import sys; sys.exit(0)
 
 #--------------------------------------------------------------------------------------
