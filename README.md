@@ -1,3 +1,5 @@
+[简体中文](./README_zh.md)
+
 # llm-scratch-pytorch
 llm-scratch-pytorch - The code is designed to be beginner-friendly, with a focus on understanding the fundamentals of PyTorch and implementing LLMs from scratch,step by step.
 
