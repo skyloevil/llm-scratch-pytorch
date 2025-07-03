@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class RMSNorm(nn.Module):
     def __init__(self, dim: int, eps: float = 1e-6):
@@ -151,7 +152,7 @@ def apply_rotary_embeddings(x: torch.Tensor, freqs_complex: torch.Tensor, device
 
     参数:
         x (torch.Tensor): 输入张量 (q 或 k)，形状为 (B, Seq_Len, H, Head_Dim)。
-        freqs_complex (torch.Tensor): 预计算��复数频率。
+        freqs_complex (torch.Tensor): 预计算的复数频率。
         device (str): 存储张量的设备。
 
     返回:
@@ -185,3 +186,62 @@ def apply_rotary_embeddings(x: torch.Tensor, freqs_complex: torch.Tensor, device
     x_out = x_out.reshape(*x.shape)
 
     return x_out.type_as(x).to(device)
+
+class FeedForward(nn.Module):
+    def __init__(self, dim: int, hidden_dim: int):
+        """
+        Initialize the FeedForward module.
+        
+        Args:
+            dim (int): The input dimension.
+            hidden_dim (int): The hidden dimension of the FeedForward layer.
+
+        ---
+        初始化 FeedForward 模块。
+
+        参数:
+            dim (int): 输入维度。
+            hidden_dim (int): FeedForward 层的隐藏维度。
+        """
+        super().__init__()
+        self.w1 = nn.Linear(dim, hidden_dim, bias=False)
+        self.w2 = nn.Linear(hidden_dim, dim, bias=False)
+        self.w3 = nn.Linear(dim, hidden_dim, bias=False)
+
+    def forward(self, x: torch.Tensor):
+        """
+        Forward pass for the FeedForward module.
+        
+        Args:
+            x (torch.Tensor): The input tensor.
+        
+        Returns:
+            torch.Tensor: The output tensor after passing through the FeedForward layer.
+
+        ---
+        FeedForward 模块的前向传播。
+
+        参数:
+            x (torch.Tensor): 输入张量。
+
+        返回:
+            torch.Tensor: 通过 FeedForward 层后的输出张量。
+        """
+        # SwiGLU activation function
+        # swish(x) = x * sigmoid(x)
+        # (B, Seq_Len, Dim) -> (B, Seq_Len, Hidden_Dim)
+        # SwiGLU 激活函数
+        swish = F.silu(self.w1(x))
+        
+        # (B, Seq_Len, Dim) -> (B, Seq_Len, Hidden_Dim)
+        x_V = self.w3(x)
+        
+        # Element-wise multiplication
+        # (B, Seq_Len, Hidden_Dim) * (B, Seq_Len, Hidden_Dim) = (B, Seq_Len, Hidden_Dim)
+        # 逐元素相乘
+        x = swish * x_V
+        
+        # (B, Seq_Len, Hidden_Dim) -> (B, Seq_Len, Dim)
+        x = self.w2(x)
+        
+        return x
