@@ -280,10 +280,10 @@ class DataLoaderLite:
         x = (buf[:-1]).view(B,T)
         y = (buf[1:]).view(B,T)
 
-        self.current_position += B * T * self.process_rank + 1 # move the current position forward
+        self.current_position += B * T * self.num_processes + 1 # move the current position forward
 
-        if self.current_position + (B * T * self.process_rank +1) > len(self.tokens):
-            self.current_position = 0
+        if self.current_position + (B * T * self.num_processes +1) > len(self.tokens):
+            self.current_position = self.B * self.T * self.process_rank
         return x,y
 
 #--------------------------------------------------------------------------------------
