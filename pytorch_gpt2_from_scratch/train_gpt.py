@@ -361,6 +361,9 @@ train_loader = DataLoaderLite(B,T,process_rank=ddp_rank,num_processes=ddp_world_
 #get logits
 model = GPT(GPTConfig())
 model.to(device)
+print("model.parameters: ",model.parameters)
+for name, param in model.named_parameters():
+    print(f"{name}: {list(param.shape)}\n")
 '''
 RTX 4000 Ada
 before model = torch.compile(model) :
