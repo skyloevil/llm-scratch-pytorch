@@ -151,6 +151,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# Local datasets
+pytorch_lora/data/
+
 # Pyre type checker
 .pyre/
 
