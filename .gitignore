@@ -154,6 +154,9 @@ dmypy.json
 # Local datasets
 pytorch_lora/data/
 
+# Model files
+*.safetensors
+
 # Pyre type checker
 .pyre/
 
