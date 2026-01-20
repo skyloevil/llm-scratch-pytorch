@@ -129,3 +129,27 @@ print('Timestamp tokens 2.0 seconds:',tokenizer.encode("<2.0 seconds>"))
 {%- endif %}
 
 '''
+
+print("#"*64)
+
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen3-VL-4B-Instruct")
+
+messages = [
+    {"role": "system", "content": "你是一个助手。"},
+    {"role": "user", "content": "介绍一下 Qwen3-VL。"},
+    {"role": "assistant", "content": "当然可以。"},
+    {"role": "user", "content": [
+        {"type": "image"},  # 占位符，生成 <|vision_start|><|image_pad|><|vision_end|>
+        {"type": "text", "text": "这张图里有什么？"}
+    ]}
+]
+
+prompt = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,            # 生成字符串
+    add_generation_prompt=True # 末尾追加 assistant 起始标记
+)
+
+print("prompt: ",prompt)
