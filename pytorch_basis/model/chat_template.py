@@ -3,6 +3,7 @@ tokenizer = AutoTokenizer.from_pretrained('Qwen/Qwen3-VL-4B-Instruct')
 print('Has chat_template:', hasattr(tokenizer, 'chat_template'))
 print('Chat template length:', len(tokenizer.chat_template) if tokenizer.chat_template else 0)
 print('Chat template:',tokenizer.chat_template)
+print("#"*64)
 print('Timestamp tokens 1.0 seconds:',tokenizer.encode("<1.0 seconds>"))
 print('Timestamp tokens 2.0 seconds:',tokenizer.encode("<2.0 seconds>"))
 
